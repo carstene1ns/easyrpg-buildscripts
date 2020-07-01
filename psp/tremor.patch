@@ -1,0 +1,16 @@
+diff --color -Naur tremor-b56ffce0c0773ec5ca04c466bc00b1bbcaf65aef/misc.h tremor-psp/misc.h
+--- tremor-b56ffce0c0773ec5ca04c466bc00b1bbcaf65aef/misc.h	2015-01-05 19:59:49.000000000 +0100
++++ tremor-psp/misc.h	2020-07-01 11:41:07.905913161 +0200
+@@ -41,6 +41,12 @@
+ #include <sys/types.h>
+ #endif
+ 
++#ifdef PSP
++#define LITTLE_ENDIAN 1
++#define BIG_ENDIAN 2
++#define BYTE_ORDER LITTLE_ENDIAN
++#endif
++
+ #if BYTE_ORDER==LITTLE_ENDIAN
+ union magic {
+   struct {

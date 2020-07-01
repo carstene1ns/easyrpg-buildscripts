@@ -1,0 +1,44 @@
+diff --color -Naur mpg123-1.25.8.old/src/compat/compat.c mpg123-1.25.8/src/compat/compat.c
+--- mpg123-1.25.8.old/src/compat/compat.c	2017-11-30 08:55:41.000000000 +0100
++++ mpg123-1.25.8/src/compat/compat.c	2018-02-27 21:48:28.544476262 +0100
+@@ -642,7 +642,7 @@
+ 	return got;
+ }
+ 
+-#ifndef NO_CATCHSIGNAL
++#if 0
+ #if (!defined(WIN32) || defined (__CYGWIN__)) && defined(HAVE_SIGNAL_H)
+ void (*catchsignal(int signum, void(*handler)()))()
+ {
+diff --color -Naur mpg123-1.25.8.old/src/control_generic.c mpg123-1.25.8/src/control_generic.c
+--- mpg123-1.25.8.old/src/control_generic.c	2017-11-30 08:55:41.000000000 +0100
++++ mpg123-1.25.8/src/control_generic.c	2018-02-27 22:37:54.988148142 +0100
+@@ -58,6 +58,8 @@
+ 
+ #include "debug.h"
+ 
++#define select(...) 0
++
+ void generic_sendmsg (const char *fmt, ...)
+ {
+ 	va_list ap;
+diff --color -Naur mpg123-1.25.8.old/src/Makemodule.am mpg123-1.25.8/src/Makemodule.am
+--- mpg123-1.25.8.old/src/Makemodule.am	2017-11-30 08:55:41.000000000 +0100
++++ mpg123-1.25.8/src/Makemodule.am	2018-02-27 22:37:34.227585927 +0100
+@@ -4,11 +4,11 @@
+ include src/libmpg123/Makemodule.am
+ include src/libout123/Makemodule.am
+ 
+-bin_PROGRAMS += \
+-  src/mpg123 \
+-  src/out123 \
+-  src/mpg123-id3dump \
+-  src/mpg123-strip
++#bin_PROGRAMS += \
++#  src/mpg123 \
++#  src/out123 \
++#  src/mpg123-id3dump \
++#  src/mpg123-strip
+ 
+ src_mpg123_LDADD = \
+   src/compat/libcompat.la \
