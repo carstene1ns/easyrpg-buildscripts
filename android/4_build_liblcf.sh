@@ -40,7 +40,7 @@ function build() {
 		export TARGET_API=21
 	fi
 
-	export PATH=$OLD_PATH
+	export PATH=$BASE_PATH
 	export PLATFORM_PREFIX=$WORKSPACE/$2-toolchain
 
 	export PATH=$PLATFORM_PREFIX/bin:$PATH
@@ -62,15 +62,20 @@ function build() {
 	install_lib liblcf --disable-tools
 }
 
-export SDK_ROOT=$WORKSPACE/android-sdk
-export NDK_ROOT=$SDK_ROOT/ndk/21.4.7075529
+# We define these externally for fdroid
+if [ -z "$EASYRPG_FDROID_BUILD" ]; then
+
+	export SDK_ROOT=$WORKSPACE/android-sdk
+	export NDK_ROOT=$SDK_ROOT/ndk/21.4.7075529
+
+fi
 
 export MAKEFLAGS="-j${nproc:-2}"
 
 # Setup PATH
 PATH=$NDK_ROOT:$NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin:$SDK_ROOT/tools:$PATH
 
-export OLD_PATH=$PATH
+export BASE_PATH=$PATH
 
 # Prepare liblcf
 cd liblcf

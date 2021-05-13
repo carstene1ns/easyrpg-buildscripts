@@ -15,14 +15,26 @@ export EASYRPG_TOOLCHAIN_DIR=$(pwd)
 # Number of CPU
 NBPROC=$(getconf _NPROCESSORS_ONLN)
 
-# Export SDK path
-export SDK_ROOT=$WORKSPACE/android-sdk
-export ANDROID_HOME=$SDK_ROOT
-export PATH=$PATH:$SDK_ROOT:$SDK_ROOT/build-tools/28.0.0/
+# We define these externally for fdroid
+if [ -z "$EASYRPG_FDROID_BUILD" ]; then
 
-# Export NDK path
-export NDK_ROOT=$SDK_ROOT/ndk/21.4.7075529
-export PATH=$PATH:$NDK_ROOT
+	# Export SDK path
+	export SDK_ROOT=$WORKSPACE/android-sdk
+	export ANDROID_HOME=$SDK_ROOT
+	export PATH=$PATH:$SDK_ROOT:$SDK_ROOT/build-tools/28.0.0/
+
+	# Export NDK path
+	export NDK_ROOT=$SDK_ROOT/ndk/21.4.7075529
+	export PATH=$PATH:$NDK_ROOT
+
+	GRADLE="gradle"
+
+else
+
+	# Use wrapper
+	GRADLE="./gradlew"
+
+fi
 
 # EasyRPG Player
 if [ ! -d Player/.git ]; then
@@ -40,12 +52,20 @@ fi
 
 # Build
 cd $ANDROID_FOLDER
-./gradlew clean
-./gradlew -PtoolchainDirs="${EASYRPG_TOOLCHAIN_DIR}" assembleRelease
+$GRADLE clean
+$GRADLE -PtoolchainDirs="${EASYRPG_TOOLCHAIN_DIR}" assembleRelease
 
-# Sign the .apk
-cd $ANDROID_FOLDER/app/build/outputs/apk
-jarsigner -sigalg SHA1withRSA -digestalg SHA1 -keystore $KEYSTORE_PATH -storepass $KEYSTORE_PASSWORD app-release-unsigned.apk $KEYSTORE_NAME
-zipalign 4 app-release-unsigned.apk EasyRpgPlayerActivity.apk
+if [ -z "$EASYRPG_FDROID_BUILD" ]; then
+
+	# Sign the .apk
+	cd $ANDROID_FOLDER/app/build/outputs/apk
+	jarsigner -sigalg SHA1withRSA -digestalg SHA1 -keystore $KEYSTORE_PATH -storepass $KEYSTORE_PASSWORD app-release-unsigned.apk $KEYSTORE_NAME
+	zipalign 4 app-release-unsigned.apk EasyRpgPlayerActivity.apk
+
+else
+
+	echo "Skipping jar signing and zip aligning."
+
+fi
 
 cd $WORKSPACE
