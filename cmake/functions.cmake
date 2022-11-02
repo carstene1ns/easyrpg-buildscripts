@@ -57,11 +57,13 @@ function(run_with_toolchain platform toolchain_file)
 	parse_libs(${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt LIB_TARGETS)
 	#message(NOTICE "Adding convenience targets for: ${LIB_TARGETS}.")
 	foreach(lib ${LIB_TARGETS})
-		add_custom_target(cross-${lib} ${CMAKE_COMMAND} --build ${name} --target ${lib}
-			COMMENT "Building ${lib} in cross environment..."
-			VERBATIM
-		)
-		add_dependencies(cross-${lib} ${name}-configure)
+		if(NOT ${lib} STREQUAL "lcf" OR (${lib} STREQUAL "lcf" AND ${ENABLE_LCF}))
+			add_custom_target(cross-${lib} ${CMAKE_COMMAND} --build ${name} --target ${lib}
+				COMMENT "Building ${lib} in cross environment..."
+				VERBATIM
+			)
+			add_dependencies(cross-${lib} ${name}-configure)
+		endif()
 	endforeach()
 endfunction()
 
@@ -126,7 +128,7 @@ function(build_lib name)
 	endif()
 
 	# directory setup
-	set_directory_properties(PROPERTIES EP_BASE libraries)
+	set_directory_properties(PROPERTIES EP_PREFIX ".")
 	list(APPEND ADDITIONAL_OPTIONS
 		INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}
 		LOG_DIR log
@@ -143,8 +145,11 @@ function(build_lib name)
 			LOG_BUILD TRUE
 			LOG_INSTALL TRUE
 			LOG_MERGED_STDOUTERR TRUE
-			LOG_OUTPUT_ON_FAILURE TRUE)
-		list(APPEND GENERATOR_OPTIONS -DCMAKE_COLOR_MAKEFILE=OFF)
+			LOG_OUTPUT_ON_FAILURE TRUE
+		)
+		if(arg_CMAKE AND ${CMAKE_GENERATOR} STREQUAL "Unix Makefiles")
+			list(APPEND GENERATOR_OPTIONS -DCMAKE_COLOR_MAKEFILE=OFF)
+		endif()
 	endif()
 
 	if(arg_DEBUG)
@@ -180,13 +185,25 @@ endfunction()
 
 # remove unneeded toolchain dirs after building
 
-function(cleanup subdir)
-	add_custom_command(TARGET ${subdir}-cross POST_BUILD
-		COMMENT "Deleting additional directories..."
+function(cleanup target)
+	set(OPTIONS COMMENT "Deleting additional directories..."
 		COMMAND ${CMAKE_COMMAND} -E rm -rf -- bin sbin share
 		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 		VERBATIM
 	)
+
+	if(${target} STREQUAL "ALL")
+		add_custom_target(cleanup ALL ${OPTIONS})
+		# ensure all libs are build
+		parse_libs(${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt LIB_TARGETS)
+		foreach(lib ${LIB_TARGETS})
+			if(NOT ${lib} STREQUAL "lcf" OR (${lib} STREQUAL "lcf" AND ${ENABLE_LCF}))
+				add_dependencies(cleanup ${lib})
+			endif()
+		endforeach()
+	else()
+		add_custom_command(TARGET ${target} POST_BUILD ${OPTIONS})
+	endif()
 endfunction()
 
 # Parses a list of library targets to be consumed by parent build
@@ -235,8 +252,8 @@ function(build_lib_cmake name)
 
 	if(ENABLE_CCACHE)
 		list(PREPEND arg_GENERATOR
-			-DCMAKE_CXX_COMPILER_LAUNCHER=${CMAKE_CXX_COMPILER_LAUNCHER}
-			-DCMAKE_C_COMPILER_LAUNCHER=${CMAKE_C_COMPILER_LAUNCHER}
+			-DCMAKE_CXX_COMPILER_LAUNCHER=${CCACHE_EXECUTABLE}
+			-DCMAKE_C_COMPILER_LAUNCHER=${CCACHE_EXECUTABLE}
 		)
 	endif()
 
@@ -253,6 +270,11 @@ function(build_lib_cmake name)
 
 	if(arg_DEBUG AND ${CMAKE_GENERATOR} STREQUAL "Unix Makefiles")
 		list(PREPEND arg_GENERATOR -DCMAKE_VERBOSE_MAKEFILE=ON)
+	endif()
+
+	# enble -fPIC
+	if(CMAKE_POSITION_INDEPENDENT_CODE)
+		list(PREPEND arg_GENERATOR -DCMAKE_POSITION_INDEPENDENT_CODE=ON)
 	endif()
 
 	build_lib_debug()

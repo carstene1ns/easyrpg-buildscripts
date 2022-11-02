@@ -19,7 +19,7 @@ if(NOT CMAKE_TOOLCHAIN_FILE)
 	check_options()
 	check_tools()
 	run_with_toolchain(3ds $ENV{DEVKITPRO}/cmake/3DS.cmake)
-	cleanup(3ds)
+	cleanup(3ds-cross)
 else()
 	# second iteration
 

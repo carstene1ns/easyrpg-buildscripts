@@ -19,7 +19,7 @@ if(NOT CMAKE_TOOLCHAIN_FILE)
 	check_options()
 	check_tools()
 	run_with_toolchain(switch $ENV{DEVKITPRO}/cmake/Switch.cmake)
-	cleanup(switch)
+	cleanup(switch-cross)
 else()
 	# second iteration
 

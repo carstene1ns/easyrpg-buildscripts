@@ -94,6 +94,7 @@ set(OPUSFILE_OPTIONS -DOP_DISABLE_HTTP=ON -DOP_DISABLE_EXAMPLES=OB -DOP_DISABLE_
 
 set(FLUIDSYNTH_VER 2.2.9)
 set(FLUIDSYNTH_URL "https://github.com/FluidSynth/fluidsynth/archive/refs/tags/v${FLUIDSYNTH_VER}.tar.gz")
+set(FLUIDSYNTH_SHA256 bc62494ec2554fdcfc01512a2580f12fc1e1b01ce37a18b370dd7902af7a8159)
 set(FLUIDSYNTH_OPTIONS -DLIB_SUFFIX='')
 
 set(FLUIDLITE_GITVER 7c150b021f8b7e7d4f624bbad644fd2f96e5826b)
@@ -102,6 +103,7 @@ set(FLUIDLITE_OPTIONS -DFLUIDLITE_BUILD_STATIC=ON -DFLUIDLITE_BUILD_SHARED=OFF)
 
 set(NLOHMANNJSON_VER 3.10.4)
 set(NLOHMANNJSON_URL "https://github.com/nlohmann/json/archive/refs/tags/v${NLOHMANNJSON_VER}.tar.gz")
+set(NLOHMANNJSON_SHA256 1155fd1a83049767360e9a120c43c578145db3204d2b309eba49fbbedd0f4ed3)
 set(NLOHMANNJSON_OPTIONS -DJSON_BuildTests=OFF)
 
 set(FMT_VER 9.1.0)
@@ -122,11 +124,13 @@ set(ICUDATA_URL https://ci.easyrpg.org/job/icudata/lastSuccessfulBuild/artifact/
 
 set(SDL2_VER 2.24.0)
 set(SDL2_URL "https://libsdl.org/release/SDL2-${SDL2_VER}.tar.gz")
+set(SDL2_SHA256 91e4c34b1768f92d399b078e171448c6af18cafda743987ed2064a28954d6d97)
 
 # only needed for lmu2png tool
-set(SDL2_IMAGE_VER 2.0.5)
+set(SDL2_IMAGE_VER 2.6.2)
 set(SDL2_IMAGE_URL "https://www.libsdl.org/projects/SDL_image/release/SDL2_image-${SDL2_IMAGE_VER}.tar.gz")
-#SDL2_IMAGE_ARGS="--disable-jpg --disable-png-shared --disable-tif --disable-webp"
+set(SDL2_IMAGE_SHA256 48355fb4d8d00bac639cd1c4f4a7661c4afef2c212af60b340e06b7059814777)
+set(SDL2_IMAGE_OPTIONS -DSDL2IMAGE_SAMPLES=OFF -DSDL2IMAGE_GIF=OFF -DSDL2IMAGE_JPG=OFF -DSDL2IMAGE_LBM=OFF -DSDL2IMAGE_PCX=OFF -DSDL2IMAGE_PNM=OFF -DSDL2IMAGE_QOI=OFF -DSDL2IMAGE_SVG=OFF -DSDL2IMAGE_TGA=OFF -DSDL2IMAGE_XCF=OFF -DSDL2IMAGE_XPM=OFF -DSDL2IMAGE_XV=OFF)
 
 set(LCF_VER 0.7.0)
 set(LCF_URL "https://easyrpg.org/downloads/player/${LCF_VER}/liblcf-${LCF_VER}.tar.xz")

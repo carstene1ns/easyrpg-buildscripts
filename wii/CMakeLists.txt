@@ -19,7 +19,7 @@ if(NOT CMAKE_TOOLCHAIN_FILE)
 	check_options()
 	check_tools()
 	run_with_toolchain(wii $ENV{DEVKITPRO}/cmake/Wii.cmake)
-	cleanup(wii)
+	cleanup(wii-cross)
 else()
 	# second iteration
 
