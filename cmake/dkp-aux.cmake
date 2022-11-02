@@ -24,6 +24,16 @@ function(check_dkp_env platform) # BASE, 3DS, SWITCH, WII
 
 		find_library(LIB_NX nx PATHS $ENV{DEVKITPRO}/libnx/lib REQUIRED)
 		# tools are checked by toolchain file
+	elseif(platform STREQUAL WII)
+		if(NOT DEFINED ENV{DEVKITPPC})
+			message(FATAL_ERROR "Did not find $DEVKITPPC environment variable!")
+		endif()
+		if(NOT EXISTS $ENV{DEVKITPPC})
+			message(FATAL_ERROR "Did not find devkitPPC!")
+		endif()
+
+		find_library(LIB_OGC ogc PATHS $ENV{DEVKITPRO}/libogc/lib/wii REQUIRED)
+		# tools are checked by toolchain file
 	else()
 		message(FATAL_ERROR "Unknown DKP platform!")
 	endif()

@@ -6,6 +6,7 @@
 set(ZLIB_VER 1.2.13)
 set(ZLIB_URL "https://zlib.net/zlib-${ZLIB_VER}.tar.xz")
 set(ZLIB_SHA256 d14c38e313afc35a9a8760dadf26042f51ea0f5d154b0630a31da0540107fb98)
+set(ZLIB_PATCHES fix-pkg-config)
 
 set(LIBPNG_VER 1.6.38)
 set(LIBPNG_URL "https://download.sourceforge.net/libpng/libpng-${LIBPNG_VER}.tar.xz")
@@ -68,6 +69,7 @@ set(LIBXMPLITE_SHA256 19a019abd5a3ddf449cd20ca52cfe18970f6ab28abdffdd54cff563981
 
 set(SPEEXDSP_VER 1.2.1)
 set(SPEEXDSP_URL "https://downloads.xiph.org/releases/speex/speexdsp-${SPEEXDSP_VER}.tar.gz")
+set(SPEEXDSP_SHA256 8c777343e4a6399569c72abc38a95b24db56882c83dbdb6c6424a5f4aeb54d3d)
 #SPEEXDSP_ARGS="--disable-sse --disable-neon"
 
 set(LIBSAMPLERATE_VER 0.2.2)
@@ -87,7 +89,7 @@ set(OPUS_OPTIONS -DOPUS_BUILD_PROGRAMS=OFF -DOPUS_DISABLE_INTRINSICS=ON)
 
 set(OPUSFILE_VER 0.12)
 set(OPUSFILE_URL "https://github.com/xiph/opusfile/releases/download/v${OPUSFILE_VER}/opusfile-${OPUSFILE_VER}.tar.gz")
-set(OPUSFILE_SH256 118d8601c12dd6a44f52423e68ca9083cc9f2bfe72da7a8c1acb22a80ae3550b)
+set(OPUSFILE_SHA256 118d8601c12dd6a44f52423e68ca9083cc9f2bfe72da7a8c1acb22a80ae3550b)
 set(OPUSFILE_OPTIONS -DOP_DISABLE_HTTP=ON -DOP_DISABLE_EXAMPLES=OB -DOP_DISABLE_DOCS=ON)
 
 set(FLUIDSYNTH_VER 2.2.9)

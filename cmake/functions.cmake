@@ -152,18 +152,24 @@ function(build_lib name)
 		list(APPEND ADDITIONAL_OPTIONS STEP_TARGETS download update patch configure build install)
 	endif()
 
+	# sanitize
+	list(LENGTH GENERATOR_OPTIONS NUM_GEN)
+	if(NUM_GEN GREATER 0)
+		set(GENERATOR_OPTION GENERATOR)
+	endif()
+
 	if(arg_CMAKE)
 		build_lib_cmake(${name} DEBUG ${arg_DEBUG}
 			DOWNLOAD ${DOWNLOAD_OPTIONS}
 			${PATCH_OPTION} ${PATCH_OPTIONS}
-			GENERATOR ${GENERATOR_OPTIONS}
+			${GENERATOR_OPTION} ${GENERATOR_OPTIONS}
 			ADDITIONAL ${ADDITIONAL_OPTIONS}
 		)
 	elseif(arg_AUTOTOOLS)
 		build_lib_autotools(${name} DEBUG ${arg_DEBUG}
 			DOWNLOAD ${DOWNLOAD_OPTIONS}
 			${PATCH_OPTION} ${PATCH_OPTIONS}
-			GENERATOR ${GENERATOR_OPTIONS}
+			${GENERATOR_OPTION} ${GENERATOR_OPTIONS}
 			ADDITIONAL ${ADDITIONAL_OPTIONS}
 		)
 	else()
