@@ -57,11 +57,11 @@ function(run_with_toolchain platform toolchain_file)
 	parse_libs(${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt LIB_TARGETS)
 	#message(NOTICE "Adding convenience targets for: ${LIB_TARGETS}.")
 	foreach(lib ${LIB_TARGETS})
-		add_custom_target(cross-${lib} ${CMAKE_COMMAND} --build . --target ${name}-configure
-			COMMAND ${CMAKE_COMMAND} --build ${name} --target ${lib}
+		add_custom_target(cross-${lib} ${CMAKE_COMMAND} --build ${name} --target ${lib}
 			COMMENT "Building ${lib} in cross environment..."
 			VERBATIM
 		)
+		add_dependencies(cross-${lib} ${name}-configure)
 	endforeach()
 endfunction()
 
@@ -249,8 +249,11 @@ function(build_lib_cmake name)
 	list(PREPEND arg_GENERATOR -DBUILD_SHARED_LIBS=OFF
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo
 		-DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_SOURCE_DIR}
-		#-DCMAKE_VERBOSE_MAKEFILE=ON
 	)
+
+	if(arg_DEBUG AND ${CMAKE_GENERATOR} STREQUAL "Unix Makefiles")
+		list(PREPEND arg_GENERATOR -DCMAKE_VERBOSE_MAKEFILE=ON)
+	endif()
 
 	build_lib_debug()
 
