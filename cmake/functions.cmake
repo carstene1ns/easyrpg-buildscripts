@@ -72,7 +72,7 @@ endfunction()
 # general function, sets up environment, calls specific builder
 
 function(build_lib name)
-	cmake_parse_arguments(PARSE_ARGV 1 arg "CMAKE;AUTOTOOLS;VERBOSE;DEBUG" "SUBDIR" "PREFIX;OPTIONS;PATCHES")
+	cmake_parse_arguments(PARSE_ARGV 1 arg "CMAKE;AUTOTOOLS;VERBOSE;DEBUG" "SUBDIR;BOOTSTRAP" "PREFIX;OPTIONS;PATCHES")
 	if(DEFINED arg_UNPARSED_ARGUMENTS)
 		message(WARNING "build_lib: Passed extra arguments: ${arg_UNPARSED_ARGUMENTS}")
 	endif()
@@ -127,6 +127,11 @@ function(build_lib name)
 		list(APPEND ADDITIONAL_OPTIONS SOURCE_SUBDIR ${arg_SUBDIR})
 	endif()
 
+	# configure needs autoreconf sometimes
+	if(arg_BOOTSTRAP)
+		set(BOOTSTRAP_OPTION BOOTSTRAP)
+	endif()
+
 	# directory setup
 	set_directory_properties(PROPERTIES EP_PREFIX ".")
 	list(APPEND ADDITIONAL_OPTIONS
@@ -164,16 +169,17 @@ function(build_lib name)
 	endif()
 
 	if(arg_CMAKE)
-		build_lib_cmake(${name} DEBUG ${arg_DEBUG}
+		build_lib_cmake(${name} DEBUG ${arg_DEBUG} VERBOSE ${arg_VERBOSE}
 			DOWNLOAD ${DOWNLOAD_OPTIONS}
 			${PATCH_OPTION} ${PATCH_OPTIONS}
 			${GENERATOR_OPTION} ${GENERATOR_OPTIONS}
 			ADDITIONAL ${ADDITIONAL_OPTIONS}
 		)
 	elseif(arg_AUTOTOOLS)
-		build_lib_autotools(${name} DEBUG ${arg_DEBUG}
+		build_lib_autotools(${name} DEBUG ${arg_DEBUG} VERBOSE ${arg_VERBOSE}
 			DOWNLOAD ${DOWNLOAD_OPTIONS}
 			${PATCH_OPTION} ${PATCH_OPTIONS}
+			${BOOTSTRAP_OPTION} ${arg_BOOTSTRAP}
 			${GENERATOR_OPTION} ${GENERATOR_OPTIONS}
 			ADDITIONAL ${ADDITIONAL_OPTIONS}
 		)
@@ -223,7 +229,7 @@ endfunction()
 # helper functions/macros
 
 macro(build_lib_setup_args)
-	cmake_parse_arguments(PARSE_ARGV 1 "arg" "" "DEBUG;GENERATOR_WRAPPER" "DOWNLOAD;PATCH;GENERATOR;ADDITIONAL")
+	cmake_parse_arguments(PARSE_ARGV 1 "arg" "" "DEBUG;VERBOSE;GENERATOR_WRAPPER;BOOTSTRAP" "DOWNLOAD;PATCH;GENERATOR;ADDITIONAL")
 	if(DEFINED arg_UNPARSED_ARGUMENTS)
 		message(WARNING "build_lib_setup_args: passed extra arguments: ${arg_UNPARSED_ARGUMENTS}")
 	endif()
@@ -290,6 +296,62 @@ endfunction()
 function(build_lib_autotools name)
 	build_lib_setup_args()
 
+	cmake_host_system_information(RESULT Ncpu QUERY NUMBER_OF_PHYSICAL_CORES)
+	message(STATUS "CMake ${CMAKE_VERSION} using ${Ncpu} threads")
+
+	find_program(MAKE_EXECUTABLE NAMES gmake make mingw32-make REQUIRED)
+
+	if(ENABLE_CCACHE)
+		list(PREPEND arg_GENERATOR
+			"CC=${CCACHE_EXECUTABLE} ${CMAKE_CXX_COMPILER}"
+			"CXX=${CCACHE_EXECUTABLE} ${CMAKE_C_COMPILER}"
+		)
+	else()
+		list(PREPEND arg_GENERATOR CC=${CMAKE_CXX_COMPILER} CXX=${CMAKE_C_COMPILER})
+	endif()
+
+	# common flags
+	list(PREPEND arg_GENERATOR --enable-static --disable-shared
+		--prefix=${CMAKE_CURRENT_SOURCE_DIR}
+		--host=${AUTOTOOLS_TARGET_HOST}
+		--disable-dependency-tracking
+		--cache-file=${CMAKE_CURRENT_BINARY_DIR}/config.cache
+	)
+
+	if(arg_DEBUG AND ${CMAKE_GENERATOR} STREQUAL "Unix Makefiles")
+		list(PREPEND arg_GENERATOR --disable-silent-rules)
+	endif()
+
+	# enble -fPIC
+	#if(CMAKE_POSITION_INDEPENDENT_CODE)
+	#	list(PREPEND arg_GENERATOR -DCMAKE_POSITION_INDEPENDENT_CODE=ON)
+	#endif()
+
 	build_lib_debug()
+
+	ExternalProject_Add(${name}
+		${arg_DOWNLOAD}
+		${arg_PATCH}
+		CONFIGURE_COMMAND <SOURCE_DIR>/configure ${arg_GENERATOR}
+		BUILD_COMMAND ${MAKE_EXECUTABLE} -j${Ncpu}
+		INSTALL_COMMAND ${MAKE_EXECUTABLE} -j${Ncpu} install
+		${arg_ADDITIONAL}
+	)
+
+	if(arg_BOOTSTRAP)
+		if(NOT arg_VERBOSE)
+			# enable file logging instead of terminal
+			set(LOG_OPTION LOG TRUE)
+		endif()
+
+		ExternalProject_Add_Step(${name}
+			bootstrap
+			COMMAND <SOURCE_DIR>/${arg_BOOTSTRAP}
+			DEPENDEES download
+			DEPENDERS configure
+			WORKING_DIRECTORY <BINARY_DIR>
+			${LOG_OPTION}
+		)
+	endif()
 
 endfunction()

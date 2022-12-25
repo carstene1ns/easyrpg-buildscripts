@@ -6,7 +6,7 @@
 set(ZLIB_VER 1.2.13)
 set(ZLIB_URL "https://zlib.net/zlib-${ZLIB_VER}.tar.xz")
 set(ZLIB_SHA256 d14c38e313afc35a9a8760dadf26042f51ea0f5d154b0630a31da0540107fb98)
-set(ZLIB_PATCHES fix-pkg-config)
+set(ZLIB_PATCHES fix-pkg-config dont_build_more_than_needed)
 
 set(LIBPNG_VER 1.6.38)
 set(LIBPNG_URL "https://download.sourceforge.net/libpng/libpng-${LIBPNG_VER}.tar.xz")
@@ -27,8 +27,8 @@ set(HARFBUZZ_PATCHES no-docs-tests no-features)
 
 set(PIXMAN_VER 0.42.0)
 set(PIXMAN_URL "https://cairographics.org/releases/pixman-${PIXMAN_VER}.tar.gz")
-#set(PIXMAN_SHA256 )
-#PIXMAN_ARGS="--disable-libpng --enable-dependency-tracking"
+set(PIXMAN_SHA256 07f74c8d95e4a43eb2b08578b37f40b7937e6c5b48597b3a0bb2c13a53f46c13)
+set(PIXMAN_OPTIONS --disable-libpng)
 set(PIXMAN_PATCHES no-executables)
 
 set(EXPAT_VER 2.4.9)
@@ -70,7 +70,7 @@ set(LIBXMPLITE_SHA256 19a019abd5a3ddf449cd20ca52cfe18970f6ab28abdffdd54cff563981
 set(SPEEXDSP_VER 1.2.1)
 set(SPEEXDSP_URL "https://downloads.xiph.org/releases/speex/speexdsp-${SPEEXDSP_VER}.tar.gz")
 set(SPEEXDSP_SHA256 8c777343e4a6399569c72abc38a95b24db56882c83dbdb6c6424a5f4aeb54d3d)
-#SPEEXDSP_ARGS="--disable-sse --disable-neon"
+set(SPEEXDSP_OPTIONS --disable-sse --disable-neon)
 
 set(LIBSAMPLERATE_VER 0.2.2)
 set(LIBSAMPLERATE_URL "https://github.com/libsndfile/libsamplerate/releases/download/${LIBSAMPLERATE_VER}/libsamplerate-${LIBSAMPLERATE_VER}.tar.xz")
@@ -96,6 +96,7 @@ set(FLUIDSYNTH_VER 2.2.9)
 set(FLUIDSYNTH_URL "https://github.com/FluidSynth/fluidsynth/archive/refs/tags/v${FLUIDSYNTH_VER}.tar.gz")
 set(FLUIDSYNTH_SHA256 bc62494ec2554fdcfc01512a2580f12fc1e1b01ce37a18b370dd7902af7a8159)
 set(FLUIDSYNTH_OPTIONS -DLIB_SUFFIX='')
+set(FLUIDSYNTH_PATCHES no-deps no-glib)
 
 set(FLUIDLITE_GITVER 7c150b021f8b7e7d4f624bbad644fd2f96e5826b)
 set(FLUIDLITE_GITURL "https://github.com/divideconcept/FluidLite.git")

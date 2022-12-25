@@ -32,29 +32,30 @@ else()
 	include(libraries.cmake) # icu 59.2
 
 	# debugging
-	#set(BUILD_LIB_VERBOSE 1)
+	set(BUILD_LIB_VERBOSE 1)
+	set(AUTOTOOLS_TARGET_HOST arm-none-eabi)
 
-	build_lib(z CMAKE PREFIX "ZLIB")
-	build_lib(png CMAKE PREFIX "LIBPNG")
-	build_lib(freetype-stage1 CMAKE PREFIX "FREETYPE" OPTIONS -DFT_DISABLE_HARFBUZZ=TRUE)
+	#build_lib(z CMAKE PREFIX "ZLIB")
+	#build_lib(png CMAKE PREFIX "LIBPNG")
+	#build_lib(freetype-stage1 CMAKE PREFIX "FREETYPE" OPTIONS -DFT_DISABLE_HARFBUZZ=TRUE)
 	#build_lib(harfbuzz CMAKE PREFIX "HARFBUZZ")
 	#build_lib(freetype-stage2 CMAKE PREFIX "FREETYPE" OPTIONS -DFT_REQUIRE_HARFBUZZ=TRUE)
-	# pixman
+	build_lib(pixman DEBUG AUTOTOOLS PREFIX "PIXMAN")
 	#build_lib(expat CMAKE PREFIX "EXPAT")
-	build_lib(ogg CMAKE PREFIX "LIBOGG")
-	# tremor
+	#build_lib(ogg CMAKE PREFIX "LIBOGG")
+	build_lib(tremor DEBUG AUTOTOOLS PREFIX "TREMOR" BOOTSTRAP "autogen.sh")
 	#build_lib(mpg123 CMAKE PREFIX "MPG123" SUBDIR "ports/cmake")
-	build_lib(sndfile CMAKE PREFIX "LIBSNDFILE")
+	#build_lib(sndfile CMAKE PREFIX "LIBSNDFILE")
 	#build_lib(xmp-lite CMAKE PREFIX "LIBXMPLITE")
-	# speexdsp
-	build_lib(wildmidi CMAKE PREFIX "WILDMIDI")
+	build_lib(speexdsp DEBUG AUTOTOOLS PREFIX "SPEEXDSP")
+	#build_lib(wildmidi CMAKE PREFIX "WILDMIDI")
 	#build_lib(opus CMAKE PREFIX "OPUS")
 	#build_lib(opusfile CMAKE PREFIX "OPUSFILE")
-	build_lib(fluidlite CMAKE PREFIX "FLUIDLITE")
-	build_lib(fmt CMAKE PREFIX "FMT")
+	#build_lib(fluidlite CMAKE PREFIX "FLUIDLITE")
+	#build_lib(fmt CMAKE PREFIX "FMT")
 	# icu
 	if(ENABLE_LIBLCF)
-		build_lib(lcf CMAKE PREFIX "LCF")
+		#build_lib(lcf CMAKE PREFIX "LCF")
 	endif()
 
 endif()
