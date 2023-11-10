@@ -11,13 +11,13 @@ ZLIB_DIR="zlib-1.3"
 LIBPNG_URL="https://download.sourceforge.net/libpng/libpng-1.6.39.tar.xz"
 LIBPNG_DIR="libpng-1.6.39"
 
-FREETYPE_URL="https://mirrors.sarata.com/non-gnu/freetype/freetype-2.13.0.tar.xz"
+FREETYPE_URL="https://mirrors.sarata.com/non-gnu/freetype/freetype-2.13.2.tar.xz"
 FREETYPE_ARGS="-DFT_DISABLE_BZIP2=ON -DFT_DISABLE_BROTLI=ON"
-FREETYPE_DIR="freetype-2.13.0"
+FREETYPE_DIR="freetype-2.13.2"
 
-HARFBUZZ_URL="https://github.com/harfbuzz/harfbuzz/releases/download/7.1.0/harfbuzz-7.1.0.tar.xz"
+HARFBUZZ_URL="https://github.com/harfbuzz/harfbuzz/releases/download/8.2.2/harfbuzz-8.2.2.tar.xz"
 HARFBUZZ_ARGS="-DHB_HAVE_FREETYPE=ON -DHB_BUILD_SUBSET=OFF"
-HARFBUZZ_DIR="harfbuzz-7.1.0"
+HARFBUZZ_DIR="harfbuzz-8.2.2"
 
 PIXMAN_URL="https://cairographics.org/releases/pixman-0.42.2.tar.gz"
 PIXMAN_ARGS="--disable-libpng --enable-dependency-tracking"
