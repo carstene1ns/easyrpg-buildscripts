@@ -66,15 +66,7 @@ function build() {
 
 	echo "Preparing $1 toolchain"
 
-	export TARGET_API=16
-	if [ "$3" = "arm64" ]; then
-		# Minimum API 21 on ARM64
-		export TARGET_API=21
-	fi
-	if [ "$3" = "x86_64" ]; then
-		# Minimum API 21 on x86_64
-		export TARGET_API=21
-	fi
+	export TARGET_API=21
 
 	export PATH=$OLD_PATH
 	export PLATFORM_PREFIX=$WORKSPACE/$2-toolchain
@@ -127,7 +119,7 @@ function build() {
 }
 
 export SDK_ROOT=$WORKSPACE/android-sdk
-export ANDROID_NDK=$SDK_ROOT/ndk/21.4.7075529
+export ANDROID_NDK=$SDK_ROOT/ndk/28.2.13676358
 
 export MAKEFLAGS="-j${nproc:-2}"
 
