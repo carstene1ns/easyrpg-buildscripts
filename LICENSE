@@ -15,12 +15,12 @@ lhasa: ISC
 mpg123: LGPLv2.1+
 nlohmann-json: MIT
 ogg: BSD
-opus: BSD    
-opusfile: BSD   
+opus: BSD
+opusfile: BSD
 pixman: MIT
 png: zlib
 samplerate: BSD
-SDL2: zlib
+SDL3: zlib
 sndfile: LGPLv2.1+
 speexdsp: BSD
 vorbis: BSD

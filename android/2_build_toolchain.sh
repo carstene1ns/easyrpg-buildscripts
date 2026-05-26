@@ -31,29 +31,8 @@ if [ ! -f .patches-applied ]; then
 		patch -Np1 < ../pixman-cpufeatures.patch
 	)
 
-	# use android config
-	(cd $SDL2_DIR
-		mv include/SDL_config_android.h include/SDL_config.h
-		mkdir -p jni
-	)
-
 	touch .patches-applied
 fi
-
-# Install SDL2
-# FIXME: Remove this when SDL3 migration is done
-function install_lib_sdl {
-	# $1: platform (armeabi-v7a aarch64 x86 x86_x64)
-
-	pushd $SDL2_DIR
-	echo "APP_ABI := $1" >> "jni/Application.mk"
-	ndk-build NDK_PROJECT_PATH=. NDK_DEBUG=0 APP_BUILD_SCRIPT=./Android.mk APP_PLATFORM=android-$TARGET_API
-	mkdir -p $PLATFORM_PREFIX/lib
-	mkdir -p $PLATFORM_PREFIX/include/SDL2
-	cp libs/$1/* $PLATFORM_PREFIX/lib/
-	cp include/* $PLATFORM_PREFIX/include/SDL2/
-	cd ..
-}
 
 function build() {
 	# $1: Toolchain Name
@@ -114,7 +93,6 @@ function build() {
 	install_lib $LHASA_DIR $LHASA_ARGS
 	install_lib_cmake $FMT_DIR $FMT_ARGS
 	install_lib_icu_cross
-	install_lib_sdl "$2"
 	install_lib_liblcf
 }
 

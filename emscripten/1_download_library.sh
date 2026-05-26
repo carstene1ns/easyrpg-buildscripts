@@ -142,10 +142,6 @@ download_and_extract $ICU_URL
 rm -f $ICUDATA_FILES
 download_and_extract $ICUDATA_URL
 
-# SDL2
-rm -rf $SDL2_DIR
-download_and_extract $SDL2_URL
-
 # SDL3
 rm -rf $SDL3_DIR
 download_and_extract $SDL3_URL
