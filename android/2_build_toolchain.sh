@@ -31,29 +31,8 @@ if [ ! -f .patches-applied ]; then
 		patch -Np1 < ../pixman-cpufeatures.patch
 	)
 
-	# use android config
-	(cd $SDL2_DIR
-		mv include/SDL_config_android.h include/SDL_config.h
-		mkdir -p jni
-	)
-
 	touch .patches-applied
 fi
-
-# Install SDL2
-# FIXME: Remove this when SDL3 migration is done
-function install_lib_sdl {
-	# $1: platform (armeabi-v7a aarch64 x86 x86_x64)
-
-	pushd $SDL2_DIR
-	echo "APP_ABI := $1" >> "jni/Application.mk"
-	ndk-build NDK_PROJECT_PATH=. NDK_DEBUG=0 APP_BUILD_SCRIPT=./Android.mk APP_PLATFORM=android-$TARGET_API
-	mkdir -p $PLATFORM_PREFIX/lib
-	mkdir -p $PLATFORM_PREFIX/include/SDL2
-	cp libs/$1/* $PLATFORM_PREFIX/lib/
-	cp include/* $PLATFORM_PREFIX/include/SDL2/
-	cd ..
-}
 
 function build() {
 	# $1: Toolchain Name
@@ -66,15 +45,7 @@ function build() {
 
 	echo "Preparing $1 toolchain"
 
-	export TARGET_API=16
-	if [ "$3" = "arm64" ]; then
-		# Minimum API 21 on ARM64
-		export TARGET_API=21
-	fi
-	if [ "$3" = "x86_64" ]; then
-		# Minimum API 21 on x86_64
-		export TARGET_API=21
-	fi
+	export TARGET_API=21
 
 	export PATH=$OLD_PATH
 	export PLATFORM_PREFIX=$WORKSPACE/$2-toolchain
@@ -85,7 +56,7 @@ function build() {
 	export NM=$NDK_PATH/llvm-nm
 	export RANLIB=$NDK_PATH/llvm-ranlib
 
-	export CFLAGS="-no-integrated-as -g0 -O2 -fPIC $5"
+	export CFLAGS="-g0 -O2 -fPIC $5"
 	export CXXFLAGS="$CFLAGS"
 	export CPPFLAGS="-I$PLATFORM_PREFIX/include -I$ANDROID_NDK/sources/android/cpufeatures"
 	export LDFLAGS="-L$PLATFORM_PREFIX/lib"
@@ -122,12 +93,11 @@ function build() {
 	install_lib $LHASA_DIR $LHASA_ARGS
 	install_lib_cmake $FMT_DIR $FMT_ARGS
 	install_lib_icu_cross
-	install_lib_sdl "$2"
 	install_lib_liblcf
 }
 
 export SDK_ROOT=$WORKSPACE/android-sdk
-export ANDROID_NDK=$SDK_ROOT/ndk/21.4.7075529
+export ANDROID_NDK=$SDK_ROOT/ndk/28.2.13676358
 
 export MAKEFLAGS="-j${nproc:-2}"
 

@@ -121,14 +121,6 @@ install_lib_cmake $NLOHMANNJSON_DIR $NLOHMANNJSON_ARGS
 install_lib_meson $INIH_DIR $INIH_ARGS
 #install_lib $LHASA_DIR $LHASA_ARGS
 install_lib_cmake $FMT_DIR $FMT_ARGS
-
-# emscripten TARGET_HOST does not work for all libraries but SDL2 requires it
-export TARGET_HOST="asmjs-unknown-emscripten"
-rm -f config.cache
-install_lib $SDL2_DIR $SDL2_ARGS --disable-assembly --disable-threads --disable-cpuinfo
-rm -f config.cache
-unset TARGET_HOST
-
 install_lib_cmake $SDL3_DIR $SDL3_ARGS
 
 install_lib_icu_cross

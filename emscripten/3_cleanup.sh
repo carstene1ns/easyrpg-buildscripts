@@ -7,6 +7,4 @@ headermsg "Cleaning up library build folders and other stuff..."
 
 cleanup
 
-rm -rf SDL2/
-
 echo " -> done"
